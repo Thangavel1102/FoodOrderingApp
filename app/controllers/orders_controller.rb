@@ -1,4 +1,4 @@
-class OrdersController < ApplicationController
+class OrdersController < ActionController
   before_action :set_order, only: %i[ show update destroy ]
 
   # GET /orders
@@ -19,6 +19,7 @@ class OrdersController < ApplicationController
     
     @order.location_id = params[:order][:location_id]
     @order.restaurant_id = params[:order][:restaurant_id]
+    @order.delivery_charge = Order::DELIVERY_CHARGE
     if @order.save
       total_amt = 0
       no_of_items = 0
@@ -30,7 +31,12 @@ class OrdersController < ApplicationController
         no_of_items = no_of_items + 1
         OrderItem.create(qty: qty, price: price, product_id: product.id, order_id: @order.id)
       end
+      @order.update_tax
+      total_amt = (total_amt + @order.total_tax).to_f
       @order.update(no_of_items: no_of_items, total: total_amt, status: 'completed')
+      @order.calculate_order_discount
+      @order.calculate_discount
+      @order.calculate_delivery_charge
       render json: @order, status: :created, location: @order
     else
       render json: @order.errors, status: :unprocessable_entity

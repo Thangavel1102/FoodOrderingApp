@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_31_105208) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_05_034716) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -33,6 +33,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_31_105208) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "offers", force: :cascade do |t|
+    t.string "offer_type"
+    t.integer "qty"
+    t.float "amount"
+    t.boolean "is_bogo"
+    t.float "discount_percent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "order_items", force: :cascade do |t|
     t.integer "order_id"
     t.integer "qty"
@@ -40,6 +50,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_31_105208) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.float "price"
+    t.float "tax_percent"
+    t.float "tax_price"
+    t.integer "free_product_id"
+    t.string "free_product_name"
+    t.float "discount_percent"
+    t.float "discount_price"
+    t.boolean "bogo", default: false
   end
 
   create_table "orders", force: :cascade do |t|
@@ -50,6 +67,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_31_105208) do
     t.integer "restaurant_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "total_tax"
+    t.float "discount_percent"
+    t.float "discount_price"
+    t.float "delivery_charge"
+    t.float "total_discount_price"
+    t.boolean "delivery_charge_applicable", default: true
   end
 
   create_table "products", force: :cascade do |t|
@@ -59,6 +82,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_31_105208) do
     t.integer "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "tax_percent"
+    t.integer "free_product_id"
+    t.boolean "bogo"
   end
 
   create_table "restaurants", force: :cascade do |t|
